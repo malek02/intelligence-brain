@@ -7,7 +7,8 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import Particles from 'react-particles-js';
 import Facedetect from './components/FaceDetect/Facedetect'
-
+import SignIn from './components/SignIn/SignIn';
+import SignUp from './components/SignUp/SignUp';
 
 
 
@@ -24,7 +25,38 @@ class App extends Component{
 state={
   currentuser:"https://static.lexpress.fr/medias_1437/w_480,h_270,c_fill,g_north/v1404810606/billy-the-kid_736031.jpg",
   Url:'',
-  box:{}
+  box:{},
+  route: 'SignIn',
+  user:{
+    id:'',
+name:'',
+email:'',
+
+joined: ''
+    
+  },
+  number:0
+
+}
+
+firstApp=(data)=>{
+
+this.setState({user:{
+  name:data.name,
+  id:data.id,
+  
+  email:data.email,
+  joined:data.joined
+}})
+  
+  }
+componentDidMount(){
+fetch('http://localhost:3000/')
+.then(res=>res.json())
+.then(console.log)
+
+
+
 }
 calculateFace= (event)=>{
   const calirifai =  event.outputs[0].data.regions[0].region_info.bounding_box;
@@ -53,7 +85,8 @@ calculateFace= (event)=>{
     this.setState({Url:this.state.currentuser});
   
     app.models.predict("a403429f2ddf4b49b307e318f00e528b",this.state.currentuser )
-    .then(response=> this.setState({box:this.calculateFace(response)}) )
+    .then(response=> this.setState({box:this.calculateFace(response),
+    number:this.state.number+1}) )
         
                                                               // do something with response
    
@@ -63,19 +96,32 @@ calculateFace= (event)=>{
   
 this.setState({currentuser:''})  }
 
+
+onRoute=(e)=>{
+  this.setState({route:e})
+}
+
   render() {
-    console.log("box",this.state.box)
+    console.log("box",this.state.route)
+    console.log("app",this.state.number)
   return(
     <div >
       <Particles className='practice' />
-      <Navigation />
-      
+    {(this.state.route === 'SignIn') ? 
+    <SignIn onRoute={e=>this.onRoute(e)}/> :((this.state.route==='regestire') ?
+<SignUp firstApp={e=>this.firstApp(e)} onRoute={e=>this.onRoute(e)}/> :
+<>
+      <Navigation onRoute={e=>this.onRoute(e)}/>
+    
       <Logo />
-      <Rank/>
+      <Rank nember={this.state.number} bon={this.state.user}/>
       <ImageLinkForm handelchange={e=>this.handelchange(e)}
       handelsubmit={e=>this.handelsubmit(e)}
-      item={this.state.currentuser} />
+      item={this.state.currentuser} 
+        
+      />
       <Facedetect  box={this.state.box} url={this.state.Url} />
+      </> )}
     </div>
   );
 }

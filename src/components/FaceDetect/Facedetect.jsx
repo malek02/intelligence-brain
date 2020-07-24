@@ -1,11 +1,16 @@
-import React from 'react'
-import './FaceDetect.css'
+import React from 'react';
+import './FaceDetect.css';
+
+
+
+
+
 export default function Facedetect({url,box}) {
     return (
         <>
         <div className=' absolute shadow-5 center' style ={{height: 400, width: '40%', 
         top:'600px',
-        right:'600px',
+        right:'560px',
       
        
         padding:'10px 10px 10px 10px',
